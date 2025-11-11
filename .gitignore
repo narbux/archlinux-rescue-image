@@ -5,4 +5,4 @@ mkosi.key
 mkosi.rootpw
 .mkosi-private/
 mkosi.cache/*
-mkosi-output/*
+mkosi.output/*
