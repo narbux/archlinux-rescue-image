@@ -17,10 +17,9 @@ fi
 echo "Creating image"
 mkosi build
 
-echo "Removing old image from ESP"
 if compgen -G "/efi/EFI/Linux/archlinux-rescue*" > /dev/null; then
+    echo "Removing old image from ESP"
     rm /efi/EFI/Linux/archlinux-rescue*
-    echo "Removed old image."
 else
     echo "No matching files on ESP found. Skipping removal."
 fi
@@ -47,11 +46,15 @@ if [ "$free_space" -lt "$file_size" ]; then
     echo "Required: $((file_size / 1024 / 1024)) MB, Available: $((free_space / 1024 / 1024)) MB"
     exit 1
 else
-    echo "Success: Enough free space on $partition to store $file."
+    echo "Enough free space on $partition to store $file."
     echo "Required: $((file_size / 1024 / 1024)) MB, Available: $((free_space / 1024 / 1024)) MB"
     echo "Installing image"
     install -m644 -t /efi/EFI/Linux mkosi.output/*.efi
 fi
 
-echo "Signing image"
-sbctl sign /efi/EFI/Linux/archlinux-rescue*
+if [[ -x /usr/bin/sbctl ]]; then
+    echo "Signing image"
+    sbctl sign /efi/EFI/Linux/archlinux-rescue*
+else
+    echo "sbctl not found, not signing image"
+fi
